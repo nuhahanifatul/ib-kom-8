@@ -267,7 +267,7 @@
 
     <!-- MODAL CHEAT WARNING -->
     <div id="modalWarning" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden text-center animate-bounce-short">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden text-center">
             <div class="bg-red-600 text-white p-4">
                 <i class="fa-solid fa-triangle-exclamation text-4xl mb-2"></i>
                 <h3 class="text-lg font-bold">PERINGATAN KECURANGAN DETEKSI!</h3>
@@ -416,7 +416,6 @@
                 acceptedAnswers: [
                     '=COUNTIF(B2:B6,">=80")',
                     '=COUNTIF(B2:B6; ">=80")',
-                    '=COUNTIF(B2:B6 font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font">
                     '=COUNTIF(B2:B6;">=80")'
                 ]
             },
@@ -441,7 +440,7 @@
             {
                 id: 9,
                 category: "IF Tunggal (Logika Angka/Diskon)",
-                question: "Tuliskan rumus IF pada sel C2: Jika total belanja di sel B2 LEBIH DARI 100000 (>10000), berikan bonus 10000, jika tidak bonus 0!",
+                question: "Tuliskan rumus IF pada sel C2: Jika total belanja di sel B2 LEBIH DARI 100000 (>100000), berikan bonus 10000, jika tidak bonus 0!",
                 tableData: {
                     headers: ["A", "B", "C"],
                     rows: [
@@ -606,7 +605,7 @@
         totalQuestionsNum.textContent = quizData.length;
 
         // ==========================================
-        // HANDLER START QUIZ
+        // HANDLER START QUIZ (AMAT SANGAT DILEMBUTKAN)
         // ==========================================
         formStart.addEventListener('submit', function(e) {
             e.preventDefault();
