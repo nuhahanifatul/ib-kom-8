@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi Praktikum IB Komputer Kelas 8</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .gsheet-grid {
+            background-size: 24px 24px;
+            background-image: 
+                linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+                linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #107c41; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0b5c30; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 flex flex-col justify-between">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-[#107c41] text-white shadow-md border-b-4 border-[#0b5c30] sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-[#107c41] p-2 rounded-lg font-bold text-xl shadow">
+                    <i class="fa-solid font-mono fa-table"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Evaluasi Praktikum IB Komputer Kelas 8</h1>
+                    <p class="text-xs text-green-100 flex items-center gap-2">
+                        <span><i class="fa-regular fa-clock"></i> Batas Waktu: Auto</span>
+                        <span>•</span>
+                        <span id="cheatWarnStatus" class="bg-red-700 text-white px-1.5 py-0.5 rounded text-[10px] hidden font-semibold">
+                            Peringatan: <span id="cheatCount">0</span>/3
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Identity Display on Header (When Active) -->
+            <div id="headerUserInfo" class="hidden text-right bg-[#0b5c30] px-3 py-1.5 rounded-lg border border-green-600">
+                <p class="text-xs text-green-200">Peserta Ujian:</p>
+                <p class="text-sm font-semibold truncate max-w-[150px] sm:max-w-[200px]" id="displayStudentName">-</p>
+                <p class="text-[11px] text-green-300"><span id="displayClass">-</span> | Absen: <span id="displayAbsen">-</span></p>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-4xl w-full mx-auto p-4 my-4 flex-grow">
+
+        <!-- SCREEN 1: REGISTRASI & PETUNJUK -->
+        <div id="screenStart" class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div class="bg-gradient-to-r from-[#107c41] to-[#1d9e56] p-6 text-white">
+                <h2 class="text-2xl font-bold mb-1">Selamat Datang di Evaluasi Praktikum</h2>
+                <p class="text-green-100 text-sm">Uji pemahaman penulisan rumus fungsi Google Sheets (Analisis Data)</p>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- Info Peringatan Anti Curang -->
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0 text-amber-500">
+                            <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-bold text-amber-800">PERATURAN PENTING (Sistem Anti-Curang Aktif):</h3>
+                            <ul class="text-xs text-amber-700 list-disc list-inside mt-1 space-y-1">
+                                <li>Dilarang berpindah tab, membuka jendela browser lain, atau meminimalkan aplikasi.</li>
+                                <li>Sistem akan mendeteksi kecurangan. Anda diberikan **maksimal 3 kali peringatan**.</li>
+                                <li>Peringatan ke-4 akan **MENDISKUALIFIKASI/MENGAKHIRI UJIAN OTOMATIS** dan mengirim skor yang ada.</li>
+                                <li>Setiap soal wajib dijawab sebelum dapat melanjutkan ke soal berikutnya.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Identitas Siswa -->
+                <form id="formStart" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <input type="text" id="studentName" required placeholder="Contoh: Budi Santoso" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#107c41] focus:border-transparent outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Nomor Absen <span class="text-red-500">*</span></label>
+                            <input type="number" id="studentAbsen" min="1" max="50" required placeholder="Contoh: 12" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#107c41] focus:border-transparent outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Kelas <span class="text-red-500">*</span></label>
+                            <select id="studentClass" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#107c41] focus:border-transparent outline-none text-sm bg-white">
+                                <option value="" disabled selected>-- Pilih Kelas --</option>
+                                <option value="8M">Kelas 8M</option>
+                                <option value="8N">Kelas 8N</option>
+                                <option value="8O">Kelas 8O</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-[#107c41] hover:bg-[#0b5c30] text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-play"></i> Mulai Evaluasi Sekarang
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY QUIZ (SOAL) -->
+        <div id="screenQuiz" class="hidden space-y-4">
+            
+            <!-- Progress Bar & Indicator -->
+            <div class="bg-white p-4 rounded-xl shadow border border-gray-200 flex flex-col md:flex-row justify-between items-center gap-3">
+                <div class="w-full md:w-2/3">
+                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
+                        <span>Progres Ujian</span>
+                        <span>Soal <span id="currentQuestionNum">1</span> dari <span id="totalQuestionsNum">15</span></span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div id="progressBar" class="bg-[#107c41] h-2.5 rounded-full transition-all duration-300" style="width: 6.66%"></div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 bg-gray-50 border px-3 py-1.5 rounded-lg">
+                    <i class="fa-solid fa-stopwatch text-[#107c41]"></i>
+                    <span id="timerDisplay" class="font-mono font-bold text-gray-700 text-sm">00:00</span>
+                </div>
+            </div>
+
+            <!-- Card Soal -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <!-- Question Header -->
+                <div class="bg-gray-50 border-b p-4 flex justify-between items-center">
+                    <span id="questionCategory" class="bg-green-100 text-[#107c41] text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        Kategori Rumus
+                    </span>
+                    <span class="text-xs text-gray-500 font-medium"><i class="fa-regular fa-lightbulb"></i> Tulis rumus diawali tanda sama dengan (=)</span>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Pertanyaan Deskriptif -->
+                    <div>
+                        <h3 id="questionText" class="text-base font-semibold text-gray-800 leading-relaxed">
+                            Loading pertanyaan...
+                        </h3>
+                    </div>
+
+                    <!-- Visual Spreadsheet Mockup -->
+                    <div class="border rounded-lg overflow-hidden shadow-inner bg-white">
+                        <div class="bg-gray-100 border-b text-xs font-bold text-gray-600 flex items-center px-3 py-1.5 bg-gradient-to-b from-gray-50 to-gray-200">
+                            <i class="fa-solid fa-file-excel text-green-700 mr-2"></i> Tampilan Spreadsheet Referensi
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead id="tableHeader" class="bg-gray-200 text-gray-700 font-mono">
+                                    <!-- Dynamic header columns A, B, C... -->
+                                </thead>
+                                <tbody id="tableBody" class="font-mono divide-y divide-gray-200">
+                                    <!-- Dynamic rows 1, 2, 3... -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Input Rumus / Formula Bar Simulated -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-gray-700 uppercase flex items-center gap-2">
+                            <span class="bg-[#107c41] text-white text-[10px] px-1.5 py-0.5 rounded font-mono">fx</span>
+                            Masukkan Rumus Google Sheets Anda:
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="formulaInput" placeholder="Contoh: =SUM(A1:A10)" autocomplete="off" spellcheck="false" 
+                                class="w-full font-mono text-sm px-4 py-3 bg-gray-50 border-2 border-gray-300 rounded-lg focus:bg-white focus:border-[#107c41] focus:ring-0 outline-none transition">
+                            <button type="button" id="btnClearInput" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600 text-xs">
+                                <i class="fa-solid fa-xmark text-base"></i>
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-gray-500 italic">*Dukungan tanda pemisah argumen koma (,) maupun titik koma (;) disesuaikan secara otomatis.</p>
+                    </div>
+
+                    <!-- Warning Error lokal jika kosong -->
+                    <div id="quizErrorMsg" class="hidden bg-red-50 text-red-600 text-xs p-3 rounded-lg border border-red-200 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span id="quizErrorText">Harap isi rumus terlebih dahulu sebelum melanjutkan!</span>
+                    </div>
+
+                    <!-- Action Navigation -->
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="text-xs text-gray-400 italic">Soal bersifat wajib diisi</span>
+                        <button type="button" id="btnNext" class="bg-[#107c41] hover:bg-[#0b5c30] text-white font-bold py-2.5 px-6 rounded-lg shadow transition flex items-center gap-2">
+                            <span>Soal Selanjutnya</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN 3: HASIL & SKOR -->
+        <div id="screenResult" class="hidden bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden text-center p-6 sm:p-8 space-y-6">
+            <div id="resultHeaderBg" class="p-6 rounded-xl bg-green-50 border border-green-200">
+                <div id="resultIcon" class="w-16 h-16 mx-auto bg-[#107c41] text-white rounded-full flex items-center justify-center text-3xl shadow-lg mb-3">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800" id="resultStatusTitle">Evaluasi Selesai!</h2>
+                <p class="text-xs text-gray-600 mt-1" id="resultStatusDesc">Terima kasih telah menyelesaikan ujian praktikum ini.</p>
+            </div>
+
+            <!-- Score Display Box -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                <div class="bg-gray-50 p-3 rounded-lg border">
+                    <p class="text-[11px] text-gray-500 uppercase font-semibold">Skor Akhir</p>
+                    <p class="text-2xl font-bold text-[#107c41]" id="resScore">0/100</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg border">
+                    <p class="text-[11px] text-gray-500 uppercase font-semibold">Benar / Total</p>
+                    <p class="text-2xl font-bold text-gray-700" id="resCorrect">0 / 15</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg border">
+                    <p class="text-[11px] text-gray-500 uppercase font-semibold">Waktu Tempuh</p>
+                    <p class="text-2xl font-bold text-gray-700" id="resDuration">00:00</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg border">
+                    <p class="text-[11px] text-gray-500 uppercase font-semibold">Peringatan</p>
+                    <p class="text-2xl font-bold text-amber-600" id="resWarnings">0/3</p>
+                </div>
+            </div>
+
+            <!-- Status Pengiriman Ke Google Sheets -->
+            <div id="submitStatusBox" class="p-3 text-xs rounded-lg border bg-blue-50 text-blue-700 border-blue-200 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <span>Mengirim nilai otomatis ke Google Sheets rekapitulasi guru...</span>
+            </div>
+
+            <!-- Rincian Jawaban Ringkas -->
+            <div class="text-left space-y-2">
+                <h4 class="font-bold text-sm text-gray-700 border-b pb-1">Ringkasan Jawaban:</h4>
+                <div id="summaryList" class="max-h-60 overflow-y-auto space-y-2 pr-1 text-xs">
+                    <!-- Dynamic Answer Review -->
+                </div>
+            </div>
+
+            <div class="pt-4 flex flex-col sm:flex-row justify-center gap-3">
+                <button type="button" onclick="window.location.reload()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2.5 px-6 rounded-lg text-sm shadow transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Evaluasi
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t py-4 text-center text-xs text-gray-500">
+        <div class="max-w-6xl mx-auto px-4">
+            Evaluasi Praktikum IB Komputer Kelas 8 &copy; Google Sheets Formula Test System.
+        </div>
+    </footer>
+
+    <!-- MODAL CHEAT WARNING -->
+    <div id="modalWarning" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden text-center animate-bounce-short">
+            <div class="bg-red-600 text-white p-4">
+                <i class="fa-solid fa-triangle-exclamation text-4xl mb-2"></i>
+                <h3 class="text-lg font-bold">PERINGATAN KECURANGAN DETEKSI!</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <p class="text-sm text-gray-700">
+                    Anda terdeteksi meninggalkan halaman kuis / berpindah tab!
+                </p>
+                <div class="bg-red-50 p-3 rounded-lg border border-red-200">
+                    <p class="text-xs text-red-600 font-semibold">
+                        Jumlah Pelanggaran: <span id="modalWarnCount" class="text-base font-bold text-red-700">1</span> dari 3
+                    </p>
+                    <p class="text-[11px] text-red-500 mt-1">
+                        Jika pelanggaran mencapai lebih dari 3 kali, ujian Anda akan **LANGSUNG DIBATALKAN/DITUTUP** otomatis.
+                    </p>
+                </div>
+                <button type="button" id="btnDismissWarning" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm shadow transition">
+                    Saya Mengerti & Kembali Mengerjakan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ==========================================
+        // KONFIGURASI WEBHOOK APPS SCRIPT GURU
+        // ==========================================
+        const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzMhNIbchsPJxHtwu2TT7I98wfs1joCnKm_BAJkOCy7f813f6lFbr3gIisCD6soT7D9Ng/exec";
+
+        // ==========================================
+        // BANK 15 SOAL LENGKAP PADA GOOGLE SHEETS
+        // ==========================================
+        const quizData = [
+            {
+                id: 1,
+                category: "SUM (Penjumlahan)",
+                question: "Tuliskan rumus Google Sheets untuk menghitung TOTAL nilai keseluruhan dari sel B2 sampai sel B6!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["Siswa 1", "80"],
+                        ["Siswa 2", "90"],
+                        ["Siswa 3", "75"],
+                        ["Siswa 4", "85"],
+                        ["Siswa 5", "95"]
+                    ]
+                },
+                acceptedAnswers: ["=SUM(B2:B6)"]
+            },
+            {
+                id: 2,
+                category: "AVERAGE (Rata-rata)",
+                question: "Tuliskan rumus untuk menghitung RATA-RATA nilai dari rentang sel C2 hingga C6!",
+                tableData: {
+                    headers: ["A", "B", "C"],
+                    rows: [
+                        ["Siswa 1", "Tugas", "88"],
+                        ["Siswa 2", "Tugas", "76"],
+                        ["Siswa 3", "Tugas", "92"],
+                        ["Siswa 4", "Tugas", "84"],
+                        ["Siswa 5", "Tugas", "80"]
+                    ]
+                },
+                acceptedAnswers: ["=AVERAGE(C2:C6)"]
+            },
+            {
+                id: 3,
+                category: "MIN (Nilai Terendah)",
+                question: "Tuliskan rumus untuk mencari nilai TERENDAH (paling kecil) pada data di kolom B2 sampai B7!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["Ujian 1", "65"],
+                        ["Ujian 2", "88"],
+                        ["Ujian 3", "50"],
+                        ["Ujian 4", "95"],
+                        ["Ujian 5", "70"],
+                        ["Ujian 6", "82"]
+                    ]
+                },
+                acceptedAnswers: ["=MIN(B2:B7)"]
+            },
+            {
+                id: 4,
+                category: "MAX (Nilai Tertinggi)",
+                question: "Tuliskan rumus untuk menentukan nilai TERTINGGI (paling besar) dari rentang sel D2 sampai D6!",
+                tableData: {
+                    headers: ["A", "B", "C", "D"],
+                    rows: [
+                        ["01", "Ani", "UH", "98"],
+                        ["02", "Budi", "UH", "75"],
+                        ["03", "Cici", "UH", "88"],
+                        ["04", "Dedi", "UH", "90"],
+                        ["05", "Eka", "UH", "92"]
+                    ]
+                },
+                acceptedAnswers: ["=MAX(D2:D6)"]
+            },
+            {
+                id: 5,
+                category: "COUNT (Hitung Sel Angka)",
+                question: "Tuliskan rumus untuk menghitung BANYAKNYA SEL YANG BERISI ANGKA dari sel A2 sampai A8!",
+                tableData: {
+                    headers: ["A"],
+                    rows: [
+                        ["10"], ["15"], ["Lulus"], ["20"], ["-"], ["30"], ["25"]
+                    ]
+                },
+                acceptedAnswers: ["=COUNT(A2:A8)"]
+            },
+            {
+                id: 6,
+                category: "COUNTIF (Hitung dengan Syarat)",
+                question: "Tuliskan rumus untuk menghitung berapa banyak siswa yang memiliki status \"LULUS\" pada kolom C2 sampai C6!",
+                tableData: {
+                    headers: ["A", "B", "C"],
+                    rows: [
+                        ["1", "Ahmad", "LULUS"],
+                        ["2", "Bayu", "REMEDIAL"],
+                        ["3", "Cantika", "LULUS"],
+                        ["4", "Deni", "LULUS"],
+                        ["5", "Erlangga", "REMEDIAL"]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=COUNTIF(C2:C6,"LULUS")',
+                    '=COUNTIF(C2:C6; "LULUS")',
+                    '=COUNTIF(C2:C6;"LULUS")'
+                ]
+            },
+            {
+                id: 7,
+                category: "COUNTIF (Kriteria Angka)",
+                question: "Tuliskan rumus untuk menghitung berapa banyak siswa yang nilainya LEBIH DARI ATAU SAMA DENGAN 80 (>=80) pada rentang B2:B6!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["Siswa A", "85"],
+                        ["Siswa B", "70"],
+                        ["Siswa C", "90"],
+                        ["Siswa D", "78"],
+                        ["Siswa E", "80"]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=COUNTIF(B2:B6,">=80")',
+                    '=COUNTIF(B2:B6; ">=80")',
+                    '=COUNTIF(B2:B6 font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font font">
+                    '=COUNTIF(B2:B6;">=80")'
+                ]
+            },
+            {
+                id: 8,
+                category: "IF Tunggal (Logika Teks)",
+                question: "Tuliskan rumus IF pada sel B2: Jika sel A2 nilainya LEBIH DARI ATAU SAMA DENGAN 75 (>=75) maka hasilnya \"Tuntas\", jika tidak maka \"Remidi\"!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["82", "[Rumus Di Sini]"],
+                        ["68", ""],
+                        ["75", ""]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=IF(A2>=75,"Tuntas","Remidi")',
+                    '=IF(A2>=75; "Tuntas"; "Remidi")',
+                    '=IF(A2>=75;"Tuntas";"Remidi")'
+                ]
+            },
+            {
+                id: 9,
+                category: "IF Tunggal (Logika Angka/Diskon)",
+                question: "Tuliskan rumus IF pada sel C2: Jika total belanja di sel B2 LEBIH DARI 100000 (>10000), berikan bonus 10000, jika tidak bonus 0!",
+                tableData: {
+                    headers: ["A", "B", "C"],
+                    rows: [
+                        ["Pelanggan 1", "150000", "[Rumus Di Sini]"],
+                        ["Pelanggan 2", "80000", ""]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=IF(B2>100000,10000,0)',
+                    '=IF(B2>100000; 10000; 0)',
+                    '=IF(B2>100000;10000;0)'
+                ]
+            },
+            {
+                id: 10,
+                category: "IFS (Banyak Kondisi Predikat)",
+                question: "Tuliskan rumus IFS pada sel B2: Jika A2>=90 maka \"A\", jika A2>=80 maka \"B\", jika A2>=70 maka \"C\", selain itu (TRUE) maka \"D\"!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["85", "[Rumus Di Sini]"],
+                        ["92", ""],
+                        ["65", ""]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=IFS(A2>=90,"A",A2>=80,"B",A2>=70,"C",TRUE,"D")',
+                    '=IFS(A2>=90; "A"; A2>=80; "B"; A2>=70; "C"; TRUE; "D")',
+                    '=IFS(A2>=90;"A";A2>=80;"B";A2>=70;"C";TRUE;"D")'
+                ]
+            },
+            {
+                id: 11,
+                category: "SUM + Penjumlahan Rentang",
+                question: "Tuliskan rumus untuk menjumlahkan gabungan dua rentang sekaligus, yaitu nilai pada sel A2:A4 DAN B2:B4!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["10", "5"],
+                        ["20", "15"],
+                        ["30", "25"]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=SUM(A2:A4,B2:B4)',
+                    '=SUM(A2:A4; B2:B4)',
+                    '=SUM(A2:A4;B2:B4)'
+                ]
+            },
+            {
+                id: 12,
+                category: "AVERAGE (Rata-rata)",
+                question: "Tuliskan rumus untuk mencari rata-rata nilai ujian matematika dari sel B2 hingga B5!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["Tugas 1", "80"],
+                        ["Tugas 2", "85"],
+                        ["Tugas 3", "90"],
+                        ["Tugas 4", "95"]
+                    ]
+                },
+                acceptedAnswers: ["=AVERAGE(B2:B5)"]
+            },
+            {
+                id: 13,
+                category: "COUNTIF (Kriteria Spesifik Teks)",
+                question: "Tuliskan rumus untuk menghitung berapa kali kata \"Hadir\" muncul pada sel C2 sampai C7!",
+                tableData: {
+                    headers: ["A", "B", "C"],
+                    rows: [
+                        ["1", "Siswa 1", "Hadir"],
+                        ["2", "Siswa 2", "Izin"],
+                        ["3", "Siswa 3", "Hadir"],
+                        ["4", "Siswa 4", "Sakit"],
+                        ["5", "Siswa 5", "Hadir"],
+                        ["6", "Siswa 6", "Hadir"]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=COUNTIF(C2:C7,"Hadir")',
+                    '=COUNTIF(C2:C7; "Hadir")',
+                    '=COUNTIF(C2:C7;"Hadir")'
+                ]
+            },
+            {
+                id: 14,
+                category: "MAX & MIN Gabungan",
+                question: "Tuliskan rumus untuk menentukan nilai MAX (tertinggi) dari rentang data B2 sampai B6!",
+                tableData: {
+                    headers: ["A", "B"],
+                    rows: [
+                        ["Januari", "1200"],
+                        ["Februari", "1500"],
+                        ["Maret", "900"],
+                        ["April", "2000"],
+                        ["Mei", "1700"]
+                    ]
+                },
+                acceptedAnswers: ["=MAX(B2:B6)"]
+            },
+            {
+                id: 15,
+                category: "IFS (Kondisi Teks / Kelulusan)",
+                question: "Tuliskan rumus IFS pada sel C2: Jika B2=\"A\" maka \"Sangat Baik\", Jika B2=\"B\" maka \"Baik\", Selain itu (TRUE) maka \"Cukup\"!",
+                tableData: {
+                    headers: ["A", "B", "C"],
+                    rows: [
+                        ["Siswa 1", "A", "[Rumus Di Sini]"],
+                        ["Siswa 2", "B", ""],
+                        ["Siswa 3", "C", ""]
+                    ]
+                },
+                acceptedAnswers: [
+                    '=IFS(B2="A","Sangat Baik",B2="B","Baik",TRUE,"Cukup")',
+                    '=IFS(B2="A"; "Sangat Baik"; B2="B"; "Baik"; TRUE; "Cukup")',
+                    '=IFS(B2="A";"Sangat Baik";B2="B";"Baik";TRUE;"Cukup")'
+                ]
+            }
+        ];
+
+        // ==========================================
+        // STATE APLIKASI
+        // ==========================================
+        let studentInfo = { name: "", absen: "", classGroup: "" };
+        let currentQuestionIndex = 0;
+        let userAnswers = []; // Simpan objek jawaban
+        let cheatWarnings = 0;
+        let isQuizActive = false;
+        let timerInterval = null;
+        let secondsElapsed = 0;
+
+        // Elements DOM
+        const screenStart = document.getElementById('screenStart');
+        const screenQuiz = document.getElementById('screenQuiz');
+        const screenResult = document.getElementById('screenResult');
+        const formStart = document.getElementById('formStart');
+        const headerUserInfo = document.getElementById('headerUserInfo');
+        const cheatWarnStatus = document.getElementById('cheatWarnStatus');
+        const cheatCountEl = document.getElementById('cheatCount');
+
+        // Quiz DOM
+        const currentQuestionNum = document.getElementById('currentQuestionNum');
+        const totalQuestionsNum = document.getElementById('totalQuestionsNum');
+        const progressBar = document.getElementById('progressBar');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const questionCategory = document.getElementById('questionCategory');
+        const questionText = document.getElementById('questionText');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+        const formulaInput = document.getElementById('formulaInput');
+        const btnClearInput = document.getElementById('btnClearInput');
+        const btnNext = document.getElementById('btnNext');
+        const quizErrorMsg = document.getElementById('quizErrorMsg');
+
+        // Modal DOM
+        const modalWarning = document.getElementById('modalWarning');
+        const modalWarnCount = document.getElementById('modalWarnCount');
+        const btnDismissWarning = document.getElementById('btnDismissWarning');
+
+        // Initial setup
+        totalQuestionsNum.textContent = quizData.length;
+
+        // ==========================================
+        // HANDLER START QUIZ
+        // ==========================================
+        formStart.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            studentInfo.name = document.getElementById('studentName').value.trim();
+            studentInfo.absen = document.getElementById('studentAbsen').value.trim();
+            studentInfo.classGroup = document.getElementById('studentClass').value;
+
+            if (!studentInfo.name || !studentInfo.absen || !studentInfo.classGroup) {
+                alert("Harap lengkapi semua data identitas!");
+                return;
+            }
+
+            // Update Header Display
+            document.getElementById('displayStudentName').textContent = studentInfo.name;
+            document.getElementById('displayAbsen').textContent = studentInfo.absen;
+            document.getElementById('displayClass').textContent = studentInfo.classGroup;
+            headerUserInfo.classList.remove('hidden');
+
+            // Switch Screen
+            screenStart.classList.add('hidden');
+            screenQuiz.classList.remove('hidden');
+
+            // Start Quiz
+            isQuizActive = true;
+            startTimer();
+            loadQuestion(0);
+        });
+
+        // ==========================================
+        // TIMER LOGIC
+        // ==========================================
+        function startTimer() {
+            secondsElapsed = 0;
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                const mins = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
+                const secs = (secondsElapsed % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        // ==========================================
+        // LOAD QUESTION & RENDER TABLE MOCKUP
+        // ==========================================
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            const q = quizData[index];
+
+            // UI Text
+            currentQuestionNum.textContent = index + 1;
+            progressBar.style.width = `${((index + 1) / quizData.length) * 100}%`;
+            questionCategory.textContent = q.category;
+            questionText.textContent = `${index + 1}. ${q.question}`;
+            formulaInput.value = "";
+            quizErrorMsg.classList.add('hidden');
+
+            // Render Table Mockup
+            renderTableMockup(q.tableData);
+
+            // Button Text on last question
+            if (index === quizData.length - 1) {
+                btnNext.innerHTML = `<span>Selesai & Kirim Ujian</span> <i class="fa-solid fa-paper-plane text-xs"></i>`;
+            } else {
+                btnNext.innerHTML = `<span>Soal Selanjutnya</span> <i class="fa-solid fa-arrow-right text-xs"></i>`;
+            }
+
+            formulaInput.focus();
+        }
+
+        function renderTableMockup(data) {
+            // Render Headers (A, B, C...)
+            let headerHTML = `<tr><th class="border bg-gray-300 p-1 w-10 text-gray-600">#</th>`;
+            data.headers.forEach(h => {
+                headerHTML += `<th class="border p-1.5 font-bold">${h}</th>`;
+            });
+            headerHTML += `</tr>`;
+            tableHeader.innerHTML = headerHTML;
+
+            // Render Rows (1, 2, 3...)
+            let bodyHTML = "";
+            data.rows.forEach((row, rIdx) => {
+                bodyHTML += `<tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}">`;
+                bodyHTML += `<td class="border bg-gray-200 text-gray-600 font-bold p-1">${rIdx + 1}</td>`;
+                row.forEach(cell => {
+                    const isPlaceholder = cell.includes("[Rumus");
+                    bodyHTML += `<td class="border p-2 ${isPlaceholder ? 'bg-yellow-100 text-yellow-800 font-semibold italic' : 'text-gray-700'}">${cell}</td>`;
+                });
+                bodyHTML += `</tr>`;
+            });
+            tableBody.innerHTML = bodyHTML;
+        }
+
+        // Clear input button
+        btnClearInput.addEventListener('click', () => {
+            formulaInput.value = "";
+            formulaInput.focus();
+        });
+
+        // ==========================================
+        // SUBMIT / NEXT QUESTION LOGIC
+        // ==========================================
+        btnNext.addEventListener('click', handleNextQuestion);
+        formulaInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleNextQuestion();
+            }
+        });
+
+        function handleNextQuestion() {
+            const rawVal = formulaInput.value.trim();
+
+            if (!rawVal) {
+                quizErrorMsg.classList.remove('hidden');
+                return;
+            }
+            quizErrorMsg.classList.add('hidden');
+
+            // Save user answer
+            const currentQ = quizData[currentQuestionIndex];
+            const isCorrect = validateFormula(rawVal, currentQ.acceptedAnswers);
+
+            userAnswers.push({
+                questionId: currentQ.id,
+                category: currentQ.category,
+                userRaw: rawVal,
+                isCorrect: isCorrect,
+                correctSample: currentQ.acceptedAnswers[0]
+            });
+
+            // Move to next or finish
+            if (currentQuestionIndex < quizData.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                finishQuiz(false); // Normal finish
+            }
+        }
+
+        // Sanitas & Normalisasi Jawaban Rumus
+        function validateFormula(userStr, acceptedList) {
+            // Normalisasi: hilangkan spasi tidak perlu, uppercase
+            const normalize = (str) => {
+                return str.replace(/\s+/g, '') // Hapus semua spasi
+                          .toUpperCase();
+            };
+
+            const userNorm = normalize(userStr);
+
+            return acceptedList.some(acc => {
+                const accNorm = normalize(acc);
+                if (userNorm === accNorm) return true;
+
+                // Toleransi penggantian Koma (,) dengan Titik Koma (;)
+                const accWithSemicolon = accNorm.replace(/,/g, ';');
+                if (userNorm === accWithSemicolon) return true;
+
+                return false;
+            });
+        }
+
+        // ==========================================
+        // SYSTEM ANTI-CURANG (FOCUS / TAB SWITCH)
+        // ==========================================
+        window.addEventListener('blur', function() {
+            if (!isQuizActive) return;
+            triggerCheatWarning();
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (!isQuizActive) return;
+            if (document.hidden) {
+                triggerCheatWarning();
+            }
+        });
+
+        function triggerCheatWarning() {
+            cheatWarnings++;
+            cheatCountEl.textContent = cheatWarnings;
+            cheatWarnStatus.classList.remove('hidden');
+
+            if (cheatWarnings > 3) {
+                // Diskualifikasi Otomatis
+                modalWarning.classList.add('hidden');
+                alert("SISTEM: Anda telah melanggar batas peringatan kecurangan (>3 kali). Ujian dihentikan secara otomatis!");
+                finishQuiz(true); // Terminated finish
+            } else {
+                // Tampilkan Modal Peringatan
+                modalWarnCount.textContent = cheatWarnings;
+                modalWarning.classList.remove('hidden');
+            }
+        }
+
+        btnDismissWarning.addEventListener('click', function() {
+            modalWarning.classList.add('hidden');
+        });
+
+        // ==========================================
+        // FINISH QUIZ & CALCULATE SCORE
+        // ==========================================
+        function finishQuiz(isTerminatedByCheat = false) {
+            isQuizActive = false;
+            stopTimer();
+
+            // Sembunyikan layar kuis
+            screenQuiz.classList.add('hidden');
+            screenResult.classList.remove('hidden');
+
+            // Hitung Skor
+            const totalCorrect = userAnswers.filter(a => a.isCorrect).length;
+            const finalScore = Math.round((totalCorrect / quizData.length) * 100);
+            const durationStr = timerDisplay.textContent;
+
+            // Display UI Skor
+            document.getElementById('resScore').textContent = `${finalScore}`;
+            document.getElementById('resCorrect').textContent = `${totalCorrect} / ${quizData.length}`;
+            document.getElementById('resDuration').textContent = durationStr;
+            document.getElementById('resWarnings').textContent = `${cheatWarnings}/3`;
+
+            // Adjust result title if disqualified
+            if (isTerminatedByCheat) {
+                document.getElementById('resultStatusTitle').textContent = "Ujian Dibatalkan / Dihentikan";
+                document.getElementById('resultStatusDesc').textContent = "Ujian dihentikan otomatis oleh sistem karena terdeteksi berpindah tab melebihi 3 kali.";
+                document.getElementById('resultHeaderBg').className = "p-6 rounded-xl bg-red-50 border border-red-200";
+                document.getElementById('resultIcon').className = "w-16 h-16 mx-auto bg-red-600 text-white rounded-full flex items-center justify-center text-3xl shadow-lg mb-3";
+                document.getElementById('resultIcon').innerHTML = `<i class="fa-solid fa-ban"></i>`;
+            }
+
+            // Render Ringkasan Jawaban
+            renderSummaryList();
+
+            // Kirim Nilai ke Webhook Google Apps Script
+            submitScoreToGoogleSheet({
+                nama: studentInfo.name,
+                absen: studentInfo.absen,
+                kelas: studentInfo.classGroup,
+                skor: finalScore,
+                totalSoal: quizData.length,
+                persentase: finalScore,
+                status: isTerminatedByCheat ? "DIDISKUALIFIKASI (CURANG)" : "SELESAI",
+                peringatan: cheatWarnings,
+                durasi: durationStr
+            });
+        }
+
+        function renderSummaryList() {
+            const summaryList = document.getElementById('summaryList');
+            let html = "";
+
+            quizData.forEach((q, idx) => {
+                const ans = userAnswers[idx];
+                const isCorrect = ans ? ans.isCorrect : false;
+                const userText = ans ? ans.userRaw : "(Kosong)";
+
+                html += `
+                    <div class="p-2.5 rounded border ${isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-gray-700">Soal #${idx + 1} (${q.category})</span>
+                            <span class="font-semibold ${isCorrect ? 'text-green-700' : 'text-red-600'}">
+                                ${isCorrect ? '<i class="fa-solid fa-check"></i> Benar' : '<i class="fa-solid fa-xmark"></i> Salah'}
+                            </span>
+                        </div>
+                        <p class="text-gray-600 mb-1"><strong>Jawaban Anda:</strong> <code class="bg-white px-1 border rounded font-mono">${escapeHtml(userText)}</code></p>
+                        ${!isCorrect ? `<p class="text-green-800"><strong>Contoh Kunci:</strong> <code class="bg-white px-1 border rounded font-mono">${q.acceptedAnswers[0]}</code></p>` : ''}
+                    </div>
+                `;
+            });
+
+            summaryList.innerHTML = html;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // ==========================================
+        // KIRIM DATA KE GOOGLE APPS SCRIPT WEBHOOK
+        // ==========================================
+        function submitScoreToGoogleSheet(payload) {
+            const submitStatusBox = document.getElementById('submitStatusBox');
+            const targetUrl = DEFAULT_SCRIPT_URL;
+
+            if (!targetUrl || targetUrl.trim() === "" || targetUrl.includes("AKfycbxYOUR_SCRIPT_ID_HERE")) {
+                submitStatusBox.className = "p-3 text-xs rounded-lg border bg-amber-50 text-amber-800 border-amber-200 text-center";
+                submitStatusBox.innerHTML = `<i class="fa-solid fa-circle-info"></i> Nilai tidak otomatis terkirim (URL Webhook Apps Script belum diisi di kode). Anda dapat mengekspor CSV di bawah.`;
+                return;
+            }
+
+            // Kirim menggunakan fetch POST (mode no-cors untuk bypass CORS restriction Apps Script)
+            fetch(targetUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                submitStatusBox.className = "p-3 text-xs rounded-lg border bg-green-50 text-green-700 border-green-200 text-center";
+                submitStatusBox.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>BERHASIL:</strong> Skor ujian Anda telah otomatis tersimpan ke Google Sheets rekapitulasi nilai guru!`;
+            })
+            .catch(err => {
+                console.error("Error webhook:", err);
+                submitStatusBox.className = "p-3 text-xs rounded-lg border bg-red-50 text-red-700 border-red-200 text-center";
+                submitStatusBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Gagal terhubung ke Google Sheets.`;
+            });
+        }
+    </script>
+</body>
+</html>
