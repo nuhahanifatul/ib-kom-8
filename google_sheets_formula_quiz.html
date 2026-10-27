@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi Praktikum IB Komputer Kelas 8 - Google Sheets Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Tailwind Configuration for GSheet & IB Komputer Theme -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gsheet: {
+                            50: '#E6F4EA',
+                            100: '#CEEAD6',
+                            500: '#34A853',
+                            600: '#0F9D58',
+                            700: '#137333',
+                            800: '#0D652D',
+                            900: '#073B19',
+                        },
+                        googleblue: {
+                            500: '#4285F4',
+                            600: '#1A73E8',
+                            700: '#1557B0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .code-font {
+            font-family: 'Roboto Mono', monospace;
+        }
+        /* Spreadsheet Mockup Table Styling */
+        .sheet-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .sheet-table th, .sheet-table td {
+            border-right: 1px solid #cbd5e1;
+            border-bottom: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+        }
+        .sheet-table th {
+            background-color: #e2e8f0;
+            color: #334155;
+            font-weight: 700;
+            text-align: center;
+            user-select: none;
+        }
+        .sheet-table th.row-header {
+            width: 44px;
+            background-color: #f1f5f9;
+            text-align: center;
+            color: #64748b;
+        }
+        .sheet-table tr:first-child th {
+            border-top: 1px solid #cbd5e1;
+        }
+        .sheet-table tr td:first-child, .sheet-table tr th:first-child {
+            border-left: 1px solid #cbd5e1;
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col justify-between selection:bg-gsheet-100">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gsheet-700 text-white shadow-md border-b-4 border-googleblue-600 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white p-2 rounded-lg shadow-inner text-gsheet-600 flex items-center justify-center">
+                    <i class="fa-solid fa-file-excel text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl leading-tight tracking-tight">Evaluasi Praktikum IB Komputer Kelas 8</h1>
+                    <p class="text-xs text-gsheet-100 flex items-center gap-1.5 mt-0.5">
+                        <i class="fa-solid fa-graduation-cap text-yellow-300"></i> Game Simulasi Penulisan Formula Google Sheets
+                    </p>
+                </div>
+            </div>
+            <!-- Anti-Cheat Warning Badge Header -->
+            <div id="navWarningBadge" class="hidden flex items-center bg-red-900/90 text-red-100 px-3 py-1.5 rounded-full text-xs font-bold border border-red-400 shadow animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation mr-1.5 text-yellow-300 text-sm"></i>
+                <span>Pelanggaran: <span id="warningCountText">0</span>/3</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-6 flex-grow w-full">
+
+        <!-- STEP 1: FORM REGISTRASI AWAL -->
+        <div id="screenStart" class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div class="bg-gsheet-600 p-6 text-white flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-extrabold flex items-center gap-2.5">
+                        <i class="fa-solid fa-user-pen"></i> Form Registrasi Siswa
+                    </h2>
+                    <p class="text-gsheet-50 text-xs md:text-sm mt-1">Lengkapi identitas sebelum memulai Evaluasi Praktikum IB Komputer Kelas 8.</p>
+                </div>
+                <div class="hidden sm:block text-4xl text-white/20">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+            </div>
+
+            <form id="identityForm" onsubmit="startQuiz(event)" class="p-6 space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <!-- Nama Lengkap -->
+                    <div class="md:col-span-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nama Lengkap Siswa <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fa-solid fa-user"></i>
+                            </span>
+                            <input type="text" id="inputNama" required placeholder="Contoh: Muhammad Bintang" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gsheet-500 focus:border-gsheet-500 outline-none transition font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Nomor Absen -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nomor Absen <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fa-solid fa-arrow-down-1-9"></i>
+                            </span>
+                            <input type="number" min="1" max="50" id="inputAbsen" required placeholder="Contoh: 12" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gsheet-500 focus:border-gsheet-500 outline-none transition font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Dropdown Kelas -->
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Pilihan Kelas <span class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
+                                <i class="fa-solid fa-chalkboard-user"></i>
+                            </span>
+                            <select id="inputKelas" required class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gsheet-500 focus:border-gsheet-500 outline-none transition bg-white appearance-none cursor-pointer font-semibold text-gray-700">
+                                <option value="" disabled selected>-- Pilih Kelas --</option>
+                                <option value="Kelas 8M">Kelas 8M</option>
+                                <option value="Kelas 8N">Kelas 8N</option>
+                                <option value="Kelas 8O">Kelas 8O</option>
+                            </select>
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Apps Script Webhook URL -->
+                <div class="pt-3 border-t border-gray-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-xs font-bold text-gray-700">Google Apps Script Webhook URL (Integrasi GSheet Guru)</label>
+                        <button type="button" onclick="openAppsScriptModal()" class="text-xs text-googleblue-600 hover:text-googleblue-700 hover:underline flex items-center gap-1 font-bold">
+                            <i class="fa-solid fa-circle-info"></i> Petunjuk Setup Script Guru
+                        </button>
+                    </div>
+                    <input type="url" id="inputWebhook" placeholder="https://script.google.com/macros/s/AKfycb.../exec (Opsional)" class="w-full px-3 py-2 text-xs border border-gray-300 rounded-md focus:ring-1 focus:ring-gsheet-500 outline-none code-font bg-slate-50">
+                    <p class="text-[11px] text-gray-500 mt-1">Jika diisi, nilai ujian akan otomatis terkirim langsung ke Spreadsheet rekapitulasi nilai guru.</p>
+                </div>
+
+                <!-- Peraturan Anti-Curang Box -->
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg text-amber-900 text-sm space-y-1.5 shadow-sm">
+                    <div class="font-bold flex items-center gap-2 text-amber-950">
+                        <i class="fa-solid fa-shield-halved text-amber-600 text-base"></i> Peraturan Sistem Anti-Curang (Focus Switch Detection):
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-xs text-amber-900 pl-1">
+                        <li>Dilarang berpindah tab browser, membuka Google Search, AI, atau aplikasi lainnya.</li>
+                        <li>Sistem otomatis mendeteksi pelanggaran saat fokus layar Anda berpindah.</li>
+                        <li>Peringatan akan muncul berturut-turut hingga <strong>maksimal 3 kali</strong>.</li>
+                        <li><strong>Pelanggaran ke-4 (>3x):</strong> Game ujian akan <strong>OTOMATIS BERAKHIR / DISKUALIFIKASI</strong> dan nilai dikirim apa adanya!</li>
+                        <li>Seluruh 15 soal <strong>WAJIB diisi</strong> (rumus tidak boleh kosong) untuk membuka tombol soal selanjutnya.</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="w-full bg-gsheet-600 hover:bg-gsheet-700 text-white font-extrabold py-3.5 px-6 rounded-lg shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 text-lg">
+                    <i class="fa-solid fa-play-circle"></i> Mulai Ujian Praktikum
+                </button>
+            </form>
+        </div>
+
+
+        <!-- STEP 2: GAMEPLAY INTERAKTIF KUIS -->
+        <div id="screenQuiz" class="hidden space-y-5">
+            
+            <!-- Dashboard Info Topbar -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-full bg-gsheet-50 border-2 border-gsheet-500 text-gsheet-700 font-extrabold flex items-center justify-center text-lg shadow-sm">
+                        <span id="displayAbsen">00</span>
+                    </div>
+                    <div>
+                        <div class="font-extrabold text-gray-800 text-base" id="displayNama">Nama Siswa</div>
+                        <div class="text-xs text-gray-500 flex items-center gap-2">
+                            <span>Kelas: <strong id="displayKelas" class="text-gsheet-700 font-bold">Kelas 8M</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Bar & Indicator -->
+                <div class="flex-grow max-w-md mx-2">
+                    <div class="flex justify-between text-xs font-bold text-gray-600 mb-1">
+                        <span>Progress Soal Evaluasi</span>
+                        <span>Soal <span id="currentQNum" class="text-gsheet-700">1</span> dari 15</span>
+                    </div>
+                    <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden p-0.5 border border-gray-300">
+                        <div id="progressBar" class="bg-gsheet-600 h-full rounded-full transition-all duration-300" style="width: 6.66%"></div>
+                    </div>
+                </div>
+
+                <!-- Active Indicator Badge -->
+                <div class="text-right">
+                    <div class="text-[10px] text-gray-400 font-extrabold uppercase tracking-wider">Status Evaluasi</div>
+                    <div class="text-xs font-bold text-gsheet-700 flex items-center gap-1.5 bg-gsheet-50 px-2.5 py-1 rounded-full border border-gsheet-200">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> Sedang Ujian
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question & Mockup Card -->
+            <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <!-- Question Header Category -->
+                <div class="bg-gray-100 px-6 py-3.5 border-b border-gray-200 flex items-center justify-between">
+                    <span class="bg-gsheet-700 text-white text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm" id="questionCategory">
+                        Fungsi SUM
+                    </span>
+                    <span class="text-xs font-semibold text-gray-600 flex items-center gap-1">
+                        Target Sel: <code class="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded font-bold code-font" id="questionTargetCell">B7</code>
+                    </span>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Text Deskripsi Soal -->
+                    <div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-900 leading-relaxed" id="questionText">
+                            Tuliskan rumus Google Sheets untuk menghitung total nilai siswa dari cell B2 sampai B6!
+                        </h3>
+                    </div>
+
+                    <!-- Mockup Visual Table Spreadsheet -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-gray-200 overflow-x-auto shadow-inner">
+                        <div class="text-xs font-bold text-gray-500 mb-2.5 flex items-center gap-1.5">
+                            <i class="fa-solid fa-table text-gsheet-600"></i> Visual Data Spreadsheet:
+                        </div>
+                        <div id="sheetTableContainer" class="min-w-max">
+                            <!-- Injected Table JS -->
+                        </div>
+                    </div>
+
+                    <!-- Input Formula Box -->
+                    <div class="bg-gsheet-50 border-2 border-gsheet-200 p-4 rounded-xl space-y-3">
+                        <label class="block text-sm font-extrabold text-gsheet-900 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <i class="fa-solid fa-square-root-variable text-gsheet-600"></i> Ketikkan Formula / Rumus Google Sheets:
+                            </span>
+                            <span class="text-xs text-gsheet-700 font-medium">Awali dengan tanda sama dengan <strong>(=)</strong></span>
+                        </label>
+                        
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gsheet-700 font-bold code-font text-lg">
+                                fx
+                            </div>
+                            <input type="text" id="formulaInput" autocomplete="off" spellcheck="false" placeholder="=SUM(B2:B6)" class="w-full pl-11 pr-4 py-3 bg-white border-2 border-gsheet-300 rounded-lg focus:ring-2 focus:ring-gsheet-500 focus:border-gsheet-600 outline-none code-font font-bold text-gray-800 text-base md:text-lg shadow-inner transition">
+                        </div>
+                        
+                        <!-- Hint & Validation Badge -->
+                        <div class="flex flex-wrap items-center justify-between text-xs text-gray-500 gap-2">
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-circle-info text-googleblue-600"></i> Bebas menggunakan koma (<code>,</code>) atau titik koma (<code>;</code>) & huruf besar/kecil.</span>
+                            <span id="inputStatusBadge" class="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Wajib Diisi</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Navigation Button -->
+                    <div class="pt-2 flex justify-end">
+                        <button type="button" id="btnNext" onclick="submitAndNext()" class="w-full sm:w-auto bg-gsheet-600 hover:bg-gsheet-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-extrabold py-3.5 px-8 rounded-lg shadow-md hover:shadow-lg transition flex items-center justify-center gap-2">
+                            <span>Simpan & Soal Selanjutnya</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- STEP 3: LAPORAN HASIL AKHIR & SERTIFIKAT -->
+        <div id="screenResult" class="hidden space-y-6">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <!-- Header Status -->
+                <div id="resultHeaderBg" class="bg-gsheet-700 p-6 md:p-8 text-white text-center relative">
+                    <div id="statusBadgeContainer" class="inline-block px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2 bg-emerald-400 text-gsheet-900 shadow-sm">
+                        Evaluasi Praktikum Selesai
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black" id="resultTitle">Laporan Evaluasi Praktikum IB Komputer Kelas 8</h2>
+                    <p class="text-gsheet-100 text-xs md:text-sm mt-1" id="resultSubtitle">Hasil kalkulasi skor otomatis penulisan formula Google Sheets.</p>
+                </div>
+
+                <div class="p-6 md:p-8 space-y-6">
+                    <!-- Grid Summary Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center shadow-sm">
+                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Nilai Akhir</span>
+                            <div class="text-3xl md:text-4xl font-black text-gsheet-700 mt-1" id="scoreValue">0</div>
+                            <span class="text-[10px] text-gray-400 font-medium">Skala 0 - 100</span>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center shadow-sm">
+                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Jawaban Benar</span>
+                            <div class="text-3xl md:text-4xl font-black text-emerald-600 mt-1" id="correctCount">0</div>
+                            <span class="text-[10px] text-gray-400 font-medium">dari 15 Soal</span>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center shadow-sm">
+                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Jawaban Salah</span>
+                            <div class="text-3xl md:text-4xl font-black text-rose-600 mt-1" id="wrongCount">0</div>
+                            <span class="text-[10px] text-gray-400 font-medium">dari 15 Soal</span>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center shadow-sm">
+                            <span class="text-xs text-gray-500 font-bold uppercase tracking-wider">Pelanggaran Focus</span>
+                            <div class="text-3xl md:text-4xl font-black text-amber-600 mt-1" id="finalWarningCount">0</div>
+                            <span class="text-[10px] text-gray-400 font-medium">Batas Maksimal: 3x</span>
+                        </div>
+                    </div>
+
+                    <!-- Metadata Student & Sync Webhook Status -->
+                    <div class="bg-slate-100 border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                        <div class="text-sm">
+                            <div class="text-gray-800"><strong class="font-bold">Siswa:</strong> <span id="resNama">Ahmad</span> (No. Absen: <span id="resAbsen">05</span>) | <span id="resKelas" class="font-extrabold text-gsheet-700">Kelas 8M</span></div>
+                            <div class="text-xs text-gray-500 mt-0.5">Waktu Pengerjaan: <span id="resTime">10:00 WIB</span> &bull; Praktikum IB Komputer</div>
+                        </div>
+                        <div id="syncStatusBadge" class="px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 bg-gray-200 text-gray-700 border border-gray-300">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Menghubungkan ke Google Sheets...
+                        </div>
+                    </div>
+
+                    <!-- Rincian Evaluasi Jawaban -->
+                    <div>
+                        <h4 class="font-extrabold text-gray-800 text-base mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-gsheet-600"></i> Rincian Penilaian Formula Per Soal:
+                        </h4>
+                        <div id="reviewList" class="space-y-3 max-h-96 overflow-y-auto pr-1">
+                            <!-- Dynamic Content JS -->
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-4 border-t border-gray-200 flex flex-wrap gap-3 justify-between">
+                        <button onclick="downloadCSV()" class="bg-gray-800 hover:bg-gray-900 text-white text-xs md:text-sm font-bold py-2.5 px-4 rounded-lg flex items-center gap-2 transition shadow">
+                            <i class="fa-solid fa-file-csv text-emerald-400"></i> Unduh Rekap Hasil (CSV)
+                        </button>
+                        <button onclick="location.reload()" class="bg-gsheet-600 hover:bg-gsheet-700 text-white text-xs md:text-sm font-extrabold py-2.5 px-6 rounded-lg shadow transition flex items-center gap-2">
+                            <i class="fa-solid fa-rotate-right"></i> Kerjakan Ulang Evaluasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-xs text-gray-500">
+        <div class="max-w-6xl mx-auto px-4">
+            Evaluasi Praktikum IB Komputer Kelas 8 &bull; Media Pembelajaran Interaktif Google Sheets Formula Master
+        </div>
+    </footer>
+
+
+    <!-- MODAL POPUP WARNING (Anti-Curang Triggered) -->
+    <div id="warningModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all">
+            <div class="bg-red-600 p-4 text-white text-center">
+                <i class="fa-solid fa-triangle-exclamation text-4xl mb-1 animate-bounce"></i>
+                <h3 class="text-xl font-black uppercase tracking-wide">Peringatan Pelanggaran!</h3>
+            </div>
+            <div class="p-6 space-y-4 text-center">
+                <p class="text-gray-800 text-sm font-medium">
+                    Anda terdeteksi **meninggalkan halaman ujian** (berpindah tab browser, membuka Google Search, AI, atau aplikasi lain)!
+                </p>
+                
+                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-3 text-red-700 font-extrabold text-lg shadow-inner">
+                    Pelanggaran ke: <span id="modalWarningCount" class="text-3xl text-red-600">1</span> / 3
+                </div>
+
+                <p class="text-xs text-gray-500">
+                    Jika Anda melanggar **lebih dari 3 kali (pelanggaran ke-4)**, Evaluasi Praktikum IB Komputer Kelas 8 akan **MENGHENTIKAN UJIAN SECARA OTOMATIS (DISKUALIFIKASI)** dan skor langsung terkirim.
+                </p>
+
+                <button onclick="closeWarningModal()" class="w-full bg-red-600 hover:bg-red-700 text-white font-extrabold py-3 px-4 rounded-lg transition shadow-md">
+                    Saya Mengerti & Lanjutkan Ujian
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MODAL APPS SCRIPT GUIDE FOR TEACHER -->
+    <div id="appsScriptModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+            <div class="bg-gsheet-700 text-white px-6 py-4 flex justify-between items-center">
+                <h3 class="font-extrabold text-lg flex items-center gap-2">
+                    <i class="fa-solid fa-code"></i> Panduan Guru: Setup Google Apps Script
+                </h3>
+                <button onclick="closeAppsScriptModal()" class="text-white/80 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <div class="p-6 overflow-y-auto space-y-4 text-sm text-gray-700">
+                <p class="font-medium">Ikuti langkah-langkah berikut untuk mengintegrasikan skor Evaluasi Praktikum IB Komputer Kelas 8 langsung ke Google Sheets milik Anda:</p>
+                <ol class="list-decimal list-inside space-y-2 text-xs text-gray-800 font-medium">
+                    <li>Buat Spreadsheet baru di Google Drive Anda.</li>
+                    <li>Klik menu <strong>Ekstensi (Extensions)</strong> &gt; <strong>Apps Script</strong>.</li>
+                    <li>Hapus seluruh kode default, lalu **Copy & Paste** kode JavaScript di bawah ini:</li>
+                </ol>
+
+                <div class="relative">
+                    <pre class="bg-gray-900 text-emerald-400 p-4 rounded-lg text-xs code-font overflow-x-auto shadow-inner"><code>function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // Header otomatis jika sheet masih kosong
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow(["Waktu", "Nama Siswa", "Absen", "Kelas", "Nilai (0-100)", "Benar", "Salah", "Pelanggaran", "Status Ujian"]);
+    }
+    
+    sheet.appendRow([
+      data.waktu,
+      data.nama,
+      data.absen,
+      data.kelas,
+      data.nilaiAkhir,
+      data.skor,
+      data.totalSoal - data.skor,
+      data.jumlahPelanggaran,
+      data.statusSelesai
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({"result": "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({"result": "error", "error": err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}</code></pre>
+                </div>
+
+                <ol start="4" class="list-decimal list-inside space-y-2 text-xs text-gray-800 font-medium">
+                    <li>Klik <strong>Terapkan (Deploy)</strong> &gt; <strong>Terapkan sebagai web app (New deployment)</strong>.</li>
+                    <li>Ubah <em>"Who has access" (Siapa yang memiliki akses)</em> menjadi <strong>Anyone (Siapa saja)</strong>.</li>
+                    <li>Klik <strong>Deploy</strong>, salin **Web App URL**, dan masukkan pada form registrasi awal kuis ini.</li>
+                </ol>
+            </div>
+            <div class="bg-gray-100 px-6 py-3 text-right">
+                <button onclick="closeAppsScriptModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-5 rounded-lg text-xs">Tutup Panduan</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JAVASCRIPT GAME LOGIC -->
+    <script>
+        // -------------------------------------------------------------
+        // DATA 15 SOAL EVALUASI PRAKTIKUM IB KOMPUTER KELAS 8
+        // -------------------------------------------------------------
+        const questionsData = [
+            {
+                id: 1,
+                category: "Fungsi SUM",
+                targetCell: "B7",
+                text: "Tuliskan rumus Google Sheets untuk menghitung total nilai siswa dari cell B2 sampai B6!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Nama Siswa", "Nilai Komputer"],
+                    ["Andi", "85"],
+                    ["Budi", "90"],
+                    ["Citra", "78"],
+                    ["Dewi", "88"],
+                    ["Eka", "92"],
+                    ["TOTAL NILAI", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=SUM(B2:B6)", "=SUM(B2;B6)"]
+            },
+            {
+                id: 2,
+                category: "Fungsi AVERAGE",
+                targetCell: "C11",
+                text: "Tuliskan rumus Google Sheets untuk menghitung rata-rata nilai ujian lab dari C2 sampai C10!",
+                headers: ["A", "B", "C"],
+                rows: [
+                    ["No", "Nama Siswa", "Nilai Praktikum"],
+                    ["1", "Ahmad", "80"],
+                    ["2", "Bella", "85"],
+                    ["3", "Candra", "90"],
+                    ["4", "Deni", "75"],
+                    ["5", "Erna", "88"],
+                    ["6", "Farhan", "92"],
+                    ["7", "Gina", "84"],
+                    ["8", "Hadi", "78"],
+                    ["9", "Intan", "95"],
+                    ["RATA-RATA", "", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=AVERAGE(C2:C10)", "=AVERAGE(C2;C10)"]
+            },
+            {
+                id: 3,
+                category: "Fungsi MIN",
+                targetCell: "D9",
+                text: "Tuliskan rumus untuk mencari angka/nilai terendah pada rentang D2 sampai D8!",
+                headers: ["A", "B", "C", "D"],
+                rows: [
+                    ["ID", "Komponen", "Kategori", "Skor Tes"],
+                    ["K01", "Hardware", "Teori", "82"],
+                    ["K02", "Software", "Teori", "75"],
+                    ["K03", "Network", "Teori", "68"],
+                    ["K04", "GSheet", "Praktikum", "90"],
+                    ["K05", "Docs", "Praktikum", "85"],
+                    ["K06", "Slides", "Praktikum", "78"],
+                    ["K07", "Security", "Teori", "64"],
+                    ["NILAI TERENDAH", "", "", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=MIN(D2:D8)", "=MIN(D2;D8)"]
+            },
+            {
+                id: 4,
+                category: "Fungsi MAX",
+                targetCell: "B16",
+                text: "Tuliskan rumus untuk mencari nilai tertinggi dari rentang B2 sampai B15!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Siswa Kelas 8", "Nilai Akhir"],
+                    ["Siswa 1", "72"],
+                    ["Siswa 2", "88"],
+                    ["Siswa 3", "95"],
+                    ["Siswa 4", "64"],
+                    ["Siswa 5", "81"],
+                    ["Siswa 6", "90"],
+                    ["Siswa 7", "76"],
+                    ["Siswa 8", "85"],
+                    ["Siswa 9", "98"],
+                    ["Siswa 10", "69"],
+                    ["Siswa 11", "84"],
+                    ["Siswa 12", "91"],
+                    ["Siswa 13", "77"],
+                    ["Siswa 14", "89"],
+                    ["NILAI TERTINGGI", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=MAX(B2:B15)", "=MAX(B2;B15)"]
+            },
+            {
+                id: 5,
+                category: "Fungsi COUNT",
+                targetCell: "A13",
+                text: "Tuliskan rumus untuk menghitung banyaknya data berisi angka dari cell A2 sampai A12!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Kode Siswa (Angka)", "Status Presensi"],
+                    ["8001", "Hadir"],
+                    ["8002", "Hadir"],
+                    ["8003", "Izin"],
+                    ["8004", "Hadir"],
+                    ["8005", "Hadir"],
+                    ["8006", "Hadir"],
+                    ["8007", "Hadir"],
+                    ["8008", "Hadir"],
+                    ["8009", "Sakit"],
+                    ["8010", "Hadir"],
+                    ["8011", "Hadir"],
+                    ["JUMLAH SISWA", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=COUNT(A2:A12)", "=COUNT(A2;A12)"]
+            },
+            {
+                id: 6,
+                category: "Fungsi COUNTIF",
+                targetCell: "C16",
+                text: "Tuliskan rumus COUNTIF untuk menghitung berapa kali predikat \"Lulus\" muncul pada range C2 sampai C15!",
+                headers: ["A", "B", "C"],
+                rows: [
+                    ["No", "Nama", "Status Evaluasi"],
+                    ["1", "Agus", "Lulus"],
+                    ["2", "Bella", "Remidi"],
+                    ["3", "Candra", "Lulus"],
+                    ["4", "Deni", "Lulus"],
+                    ["5", "Erna", "Remidi"],
+                    ["6", "Farhan", "Lulus"],
+                    ["7", "Gina", "Lulus"],
+                    ["8", "Hadi", "Lulus"],
+                    ["9", "Intan", "Remidi"],
+                    ["10", "Joko", "Lulus"],
+                    ["11", "Kiki", "Lulus"],
+                    ["12", "Lani", "Remidi"],
+                    ["13", "Maya", "Lulus"],
+                    ["14", "Noval", "Lulus"],
+                    ["TOTAL LULUS", "", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: [
+                    '=COUNTIF(C2:C15,"Lulus")', 
+                    '=COUNTIF(C2:C15;"Lulus")',
+                    '=COUNTIF(C2:C15, "Lulus")',
+                    '=COUNTIF(C2:C15; "Lulus")'
+                ]
+            },
+            {
+                id: 7,
+                category: "Fungsi COUNTIF",
+                targetCell: "D21",
+                text: "Tuliskan rumus COUNTIF untuk menghitung jumlah siswa yang nilainya di atas 80 (\">80\") dari range D2 sampai D20!",
+                headers: ["A", "B", "C", "D"],
+                rows: [
+                    ["No", "Nama Siswa", "Kelas", "Nilai Praktikum"],
+                    ["1", "Siswa A", "8M", "85"],
+                    ["2", "Siswa B", "8M", "78"],
+                    ["3", "Siswa C", "8N", "92"],
+                    ["4", "Siswa D", "8N", "74"],
+                    ["5", "Siswa E", "8O", "88"],
+                    ["...", "...", "...", "..."],
+                    ["19", "Siswa S", "8O", "90"],
+                    ["NILAI > 80", "", "", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: [
+                    '=COUNTIF(D2:D20,">80")',
+                    '=COUNTIF(D2:D20;">80")',
+                    '=COUNTIF(D2:D20, ">80")',
+                    '=COUNTIF(D2:D20; ">80")'
+                ]
+            },
+            {
+                id: 8,
+                category: "Fungsi IF",
+                targetCell: "C2",
+                text: "Tuliskan rumus IF pada sel C2: Jika nilai di B2 >= 75 maka \"Tuntas\", jika tidak maka \"Remidi\"!",
+                headers: ["A", "B", "C"],
+                rows: [
+                    ["Nama Siswa", "Nilai Akhir", "Keterangan"],
+                    ["Rizki", "80", "[ KETIK RUMUS ]"],
+                    ["Sari", "65", ""],
+                    ["Taufik", "75", ""]
+                ],
+                validAnswers: [
+                    '=IF(B2>=75,"Tuntas","Remidi")',
+                    '=IF(B2>=75;"Tuntas";"Remidi")',
+                    '=IF(B2>=75, "Tuntas", "Remidi")',
+                    '=IF(B2>=75; "Tuntas"; "Remidi")'
+                ]
+            },
+            {
+                id: 9,
+                category: "Fungsi IF",
+                targetCell: "D2",
+                text: "Tuliskan rumus IF pada sel D2: Jika sel C2 berisi \"Hadir\" maka beri poin 100, jika tidak beri poin 0!",
+                headers: ["A", "B", "C", "D"],
+                rows: [
+                    ["No", "Nama Siswa", "Kehadiran Lab", "Poin Kehadiran"],
+                    ["1", "Utami", "Hadir", "[ KETIK RUMUS ]"],
+                    ["2", "Vina", "Izin", ""],
+                    ["3", "Wahyu", "Hadir", ""]
+                ],
+                validAnswers: [
+                    '=IF(C2="Hadir",100,0)',
+                    '=IF(C2="Hadir";100;0)',
+                    '=IF(C2="Hadir", 100, 0)',
+                    '=IF(C2="Hadir"; 100; 0)'
+                ]
+            },
+            {
+                id: 10,
+                category: "Fungsi IFS",
+                targetCell: "B2",
+                text: "Tuliskan rumus IFS pada B2 untuk nilai A2: jika >=90 \"A\", jika >=80 \"B\", jika >=70 \"C\", sisanya \"D\" (Gunakan TRUE untuk nilai default)!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Nilai Ujian (A2)", "Grade Predikat (B2)"],
+                    ["85", "[ KETIK RUMUS ]"],
+                    ["92", ""],
+                    ["68", ""]
+                ],
+                validAnswers: [
+                    '=IFS(A2>=90,"A",A2>=80,"B",A2>=70,"C",TRUE,"D")',
+                    '=IFS(A2>=90;"A";A2>=80;"B";A2>=70;"C";TRUE;"D")',
+                    '=IFS(A2>=90, "A", A2>=80, "B", A2>=70, "C", TRUE, "D")',
+                    '=IFS(A2>=90; "A"; A2>=80; "B"; A2>=70; "C"; TRUE; "D")'
+                ]
+            },
+            {
+                id: 11,
+                category: "Fungsi IFS",
+                targetCell: "D2",
+                text: "Tuliskan rumus IFS pada D2 berdasarkan skor C2: jika C2>=85 \"Sangat Baik\", jika C2>=70 \"Baik\", jika C2<70 \"Cukup\"!",
+                headers: ["A", "B", "C", "D"],
+                rows: [
+                    ["ID Siswa", "Nama Siswa", "Skor Tugas (C2)", "Kategori Tugas (D2)"],
+                    ["S-01", "Bintang", "88", "[ KETIK RUMUS ]"],
+                    ["S-02", "Celia", "75", ""],
+                    ["S-03", "Dion", "62", ""]
+                ],
+                validAnswers: [
+                    '=IFS(C2>=85,"Sangat Baik",C2>=70,"Baik",C2<70,"Cukup")',
+                    '=IFS(C2>=85;"Sangat Baik";C2>=70;"Baik";C2<70;"Cukup")',
+                    '=IFS(C2>=85, "Sangat Baik", C2>=70, "Baik", C2<70, "Cukup")',
+                    '=IFS(C2>=85; "Sangat Baik"; C2>=70; "Baik"; C2<70; "Cukup")'
+                ]
+            },
+            {
+                id: 12,
+                category: "Fungsi SUM (Rentang Luas)",
+                targetCell: "D11",
+                text: "Tuliskan rumus SUM untuk menjumlahkan seluruh nilai praktikum Tugas 1 (B2:B10) dan Tugas 2 (C2:C10) dalam satu rentang (B2:C10)!",
+                headers: ["A", "B", "C", "D"],
+                rows: [
+                    ["Nama Siswa", "Tugas 1", "Tugas 2", "TOTAL KESELURUHAN"],
+                    ["Siswa 1", "80", "85", ""],
+                    ["Siswa 2", "90", "95", ""],
+                    ["...", "...", "...", "..."],
+                    ["Siswa 9", "75", "80", ""],
+                    ["TOTAL TUGAS 1 & 2", "", "", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=SUM(B2:C10)", "=SUM(B2;C10)"]
+            },
+            {
+                id: 13,
+                category: "Fungsi AVERAGE",
+                targetCell: "B9",
+                text: "Tuliskan rumus AVERAGE untuk menghitung rata-rata nilai materi Google Sheets dari sel B2 sampai B8!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Nama Siswa", "Nilai GSheets"],
+                    ["Siswa 1", "88"],
+                    ["Siswa 2", "92"],
+                    ["Siswa 3", "78"],
+                    ["Siswa 4", "85"],
+                    ["Siswa 5", "90"],
+                    ["Siswa 6", "82"],
+                    ["Siswa 7", "94"],
+                    ["RATA-RATA GSHEETS", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: ["=AVERAGE(B2:B8)", "=AVERAGE(B2;B8)"]
+            },
+            {
+                id: 14,
+                category: "Fungsi COUNTIF",
+                targetCell: "B26",
+                text: "Tuliskan rumus COUNTIF untuk menghitung berapa banyak siswa laki-laki dengan kode \"L\" pada kolom gender B2 sampai B25!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Nama Siswa", "Jenis Kelamin"],
+                    ["Siswa A", "L"],
+                    ["Siswa B", "P"],
+                    ["Siswa C", "L"],
+                    ["...", "..."],
+                    ["Siswa X", "L"],
+                    ["JUMLAH LAKI-LAKI (L)", "[ KETIK RUMUS ]"]
+                ],
+                validAnswers: [
+                    '=COUNTIF(B2:B25,"L")',
+                    '=COUNTIF(B2:B25;"L")',
+                    '=COUNTIF(B2:B25, "L")',
+                    '=COUNTIF(B2:B25; "L")'
+                ]
+            },
+            {
+                id: 15,
+                category: "Fungsi IF (Bonus Poin)",
+                targetCell: "B2",
+                text: "Tuliskan rumus IF pada B2: jika keaktifan siswa di A2 > 80 maka berikan bonus \"+10\", jika tidak \"0\"!",
+                headers: ["A", "B"],
+                rows: [
+                    ["Skor Keaktifan (A2)", "Bonus Poin (B2)"],
+                    ["85", "[ KETIK RUMUS ]"],
+                    ["70", ""],
+                    ["95", ""]
+                ],
+                validAnswers: [
+                    '=IF(A2>80,"+10","0")',
+                    '=IF(A2>80;"+10";"0")',
+                    '=IF(A2>80, "+10", "0")',
+                    '=IF(A2>80; "+10"; "0")',
+                    '=IF(A2>80,10,0)',
+                    '=IF(A2>80;10;0)'
+                ]
+            }
+        ];
+
+        // -------------------------------------------------------------
+        // STATE VARIABLES
+        // -------------------------------------------------------------
+        let studentData = {
+            nama: "",
+            absen: "",
+            kelas: "",
+            webhookUrl: ""
+        };
+
+        let currentQIndex = 0;
+        let userAnswers = []; 
+        let warningCount = 0;
+        let isQuizActive = false;
+
+        // -------------------------------------------------------------
+        // INITIALIZATION
+        // -------------------------------------------------------------
+        window.onload = function() {
+            setupAntiCheat();
+
+            // Load saved webhook from localStorage if exists
+            const savedWebhook = localStorage.getItem("ib_komputer_webhook");
+            if (savedWebhook) {
+                document.getElementById("inputWebhook").value = savedWebhook;
+            }
+        };
+
+        // Anti-Cheating Focus Detection Setup
+        function setupAntiCheat() {
+            document.addEventListener("visibilitychange", function() {
+                if (document.visibilityState === "hidden" && isQuizActive) {
+                    handleViolation();
+                }
+            });
+
+            window.addEventListener("blur", function() {
+                if (isQuizActive) {
+                    handleViolation();
+                }
+            });
+        }
+
+        function handleViolation() {
+            if (!isQuizActive) return;
+
+            warningCount++;
+            document.getElementById("warningCountText").textContent = warningCount;
+            document.getElementById("modalWarningCount").textContent = warningCount;
+
+            if (warningCount > 3) {
+                // Terminate automatically on 4th violation (>3x)
+                isQuizActive = false;
+                closeWarningModal();
+                finishQuiz(true); // Terminated / Disqualified
+            } else {
+                document.getElementById("warningModal").classList.remove("hidden");
+            }
+        }
+
+        function closeWarningModal() {
+            document.getElementById("warningModal").classList.add("hidden");
+        }
+
+        // -------------------------------------------------------------
+        // START QUIZ GAME
+        // -------------------------------------------------------------
+        function startQuiz(e) {
+            e.preventDefault();
+
+            const nama = document.getElementById("inputNama").value.trim();
+            const absen = document.getElementById("inputAbsen").value.trim();
+            const kelasElem = document.getElementById("inputKelas");
+            const webhook = document.getElementById("inputWebhook").value.trim();
+
+            if (!nama || !absen || !kelasElem.value) {
+                alert("Harap lengkapi Nama, Nomor Absen, dan Pilihan Kelas!");
+                return;
+            }
+
+            studentData.nama = nama;
+            studentData.absen = absen;
+            studentData.kelas = kelasElem.value;
+            studentData.webhookUrl = webhook;
+
+            if (webhook) {
+                localStorage.setItem("ib_komputer_webhook", webhook);
+            }
+
+            // Set UI header student info
+            document.getElementById("displayNama").textContent = studentData.nama;
+            document.getElementById("displayAbsen").textContent = studentData.absen.padStart(2, '0');
+            document.getElementById("displayKelas").textContent = studentData.kelas;
+            document.getElementById("navWarningBadge").classList.remove("hidden");
+
+            // Switch Screen
+            document.getElementById("screenStart").classList.add("hidden");
+            document.getElementById("screenQuiz").classList.remove("hidden");
+
+            // Reset States
+            currentQIndex = 0;
+            userAnswers = new Array(questionsData.length).fill("");
+            warningCount = 0;
+            isQuizActive = true;
+
+            loadQuestion(currentQIndex);
+        }
+
+        // -------------------------------------------------------------
+        // LOAD QUESTION
+        // -------------------------------------------------------------
+        function loadQuestion(index) {
+            const q = questionsData[index];
+
+            document.getElementById("currentQNum").textContent = index + 1;
+            document.getElementById("questionCategory").textContent = q.category;
+            document.getElementById("questionTargetCell").textContent = q.targetCell;
+            document.getElementById("questionText").textContent = q.text;
+
+            // Update Progress Bar
+            const progressPercent = ((index + 1) / questionsData.length) * 100;
+            document.getElementById("progressBar").style.width = `${progressPercent}%`;
+
+            // Render Table Mockup
+            renderTableMockup(q);
+
+            // Set Input
+            const inputField = document.getElementById("formulaInput");
+            inputField.value = userAnswers[index] || "";
+            inputField.focus();
+
+            updateInputBadge();
+
+            inputField.oninput = function() {
+                updateInputBadge();
+            };
+        }
+
+        function updateInputBadge() {
+            const val = document.getElementById("formulaInput").value.trim();
+            const badge = document.getElementById("inputStatusBadge");
+            const btnNext = document.getElementById("btnNext");
+
+            if (val.length > 0) {
+                badge.textContent = "Sudah Diisi (Siap Disimpan)";
+                badge.className = "font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-300";
+                btnNext.disabled = false;
+            } else {
+                badge.textContent = "Wajib Diisi";
+                badge.className = "font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-300";
+                btnNext.disabled = false; // Validated on submit click with alert if empty
+            }
+        }
+
+        // Render Mockup Spreadsheet Table
+        function renderTableMockup(qData) {
+            const container = document.getElementById("sheetTableContainer");
+            
+            let html = `<table class="sheet-table w-full bg-white rounded shadow-sm code-font">`;
+            
+            // Header Row A, B, C...
+            html += `<thead><tr><th class="row-header"></th>`;
+            qData.headers.forEach(h => {
+                html += `<th>${h}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            // Data Rows 1, 2, 3...
+            qData.rows.forEach((row, rowIndex) => {
+                const rowNum = rowIndex + 1;
+                html += `<tr><td class="row-header">${rowNum}</td>`;
+                row.forEach((cellVal) => {
+                    if (cellVal === "[ KETIK RUMUS ]") {
+                        html += `<td class="bg-amber-100 font-extrabold text-amber-900 border-2 border-amber-400 text-center animate-pulse">${cellVal}</td>`;
+                    } else {
+                        html += `<td class="text-gray-800">${cellVal}</td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table>`;
+            container.innerHTML = html;
+        }
+
+        // -------------------------------------------------------------
+        // SUBMIT & NEXT
+        // -------------------------------------------------------------
+        function submitAndNext() {
+            const inputField = document.getElementById("formulaInput");
+            const answer = inputField.value.trim();
+
+            if (!answer) {
+                alert("Soal ini WAJIB diisi dengan rumus sebelum dapat melanjutkan ke soal berikutnya!");
+                inputField.focus();
+                return;
+            }
+
+            userAnswers[currentQIndex] = answer;
+
+            if (currentQIndex < questionsData.length - 1) {
+                currentQIndex++;
+                loadQuestion(currentQIndex);
+            } else {
+                finishQuiz(false);
+            }
+        }
+
+        // Normalize Formula String for lenient comparison
+        function normalizeFormula(str) {
+            if (!str) return "";
+            return str.replace(/\s+/g, '').toUpperCase();
+        }
+
+        // -------------------------------------------------------------
+        // FINISH QUIZ & CALCULATE SCORE
+        // -------------------------------------------------------------
+        function finishQuiz(isDisqualified = false) {
+            isQuizActive = false;
+
+            let correctCount = 0;
+            questionsData.forEach((q, idx) => {
+                const uAns = normalizeFormula(userAnswers[idx]);
+                const isCorrect = q.validAnswers.some(validAns => normalizeFormula(validAns) === uAns);
+                if (isCorrect) {
+                    correctCount++;
+                }
+            });
+
+            const totalSoal = questionsData.length;
+            const finalScore = Math.round((correctCount / totalSoal) * 100);
+
+            // Switch Screen
+            document.getElementById("screenQuiz").classList.add("hidden");
+            document.getElementById("screenResult").classList.remove("hidden");
+
+            // Populate UI Scorecard
+            document.getElementById("scoreValue").textContent = finalScore;
+            document.getElementById("correctCount").textContent = correctCount;
+            document.getElementById("wrongCount").textContent = totalSoal - correctCount;
+            document.getElementById("finalWarningCount").textContent = warningCount;
+
+            document.getElementById("resNama").textContent = studentData.nama;
+            document.getElementById("resAbsen").textContent = studentData.absen;
+            document.getElementById("resKelas").textContent = studentData.kelas;
+            document.getElementById("resTime").textContent = new Date().toLocaleTimeString("id-ID");
+
+            // Disqualification Styling
+            const badge = document.getElementById("statusBadgeContainer");
+            const resTitle = document.getElementById("resultTitle");
+            const resHeader = document.getElementById("resultHeaderBg");
+
+            if (isDisqualified) {
+                badge.textContent = "DIHENTIKAN PAKSA (DISKUALIFIKASI)";
+                badge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-red-400 text-red-950";
+                resTitle.textContent = "Ujian Dihentikan karena Melanggar Aturan (>3x Focus Switch)";
+                resHeader.className = "bg-red-800 p-6 md:p-8 text-white text-center relative";
+            } else {
+                badge.textContent = "EVALUASI PRAKTIKUM SELESAI";
+                badge.className = "inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2 bg-emerald-400 text-gsheet-900";
+                resTitle.textContent = "Laporan Evaluasi Praktikum IB Komputer Kelas 8";
+                resHeader.className = "bg-gsheet-700 p-6 md:p-8 text-white text-center relative";
+            }
+
+            // Render Review
+            renderReviewList();
+
+            // Webhook Data Transmission
+            const payload = {
+                waktu: new Date().toLocaleString("id-ID"),
+                nama: studentData.nama,
+                absen: studentData.absen,
+                kelas: studentData.kelas,
+                nilaiAkhir: finalScore,
+                skor: correctCount,
+                totalSoal: totalSoal,
+                jumlahPelanggaran: warningCount,
+                statusSelesai: isDisqualified ? "Diskualifikasi (Pindah Tab >3x)" : "Selesai Normal"
+            };
+
+            sendDataToGSheet(payload);
+        }
+
+        // Render Review List Details
+        function renderReviewList() {
+            const container = document.getElementById("reviewList");
+            container.innerHTML = "";
+
+            questionsData.forEach((q, idx) => {
+                const uAns = userAnswers[idx] || "(Kosong)";
+                const isCorrect = q.validAnswers.some(validAns => normalizeFormula(validAns) === normalizeFormula(uAns));
+
+                const item = document.createElement("div");
+                item.className = `p-4 rounded-xl border ${isCorrect ? 'bg-emerald-50/70 border-emerald-300' : 'bg-rose-50/70 border-rose-300'}`;
+                
+                item.innerHTML = `
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <span class="text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${isCorrect ? 'bg-emerald-200 text-emerald-900' : 'bg-rose-200 text-rose-900'}">
+                                Soal ${idx + 1} &bull; ${q.category}
+                            </span>
+                            <p class="text-sm font-bold text-gray-800 mt-1.5">${q.text}</p>
+                        </div>
+                        <i class="fa-solid ${isCorrect ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-rose-600'} text-2xl"></i>
+                    </div>
+                    <div class="mt-3 text-xs space-y-1 code-font">
+                        <div class="text-gray-700"><strong>Jawaban Siswa:</strong> <span class="${isCorrect ? 'text-emerald-800 font-bold' : 'text-rose-800 font-bold'}">${escapeHtml(uAns)}</span></div>
+                        ${!isCorrect ? `<div class="text-gray-600"><strong>Kunci Jawaban Tepat:</strong> <span class="text-gsheet-700 font-bold">${escapeHtml(q.validAnswers[0])}</span></div>` : ''}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Send Data to GSheets Webhook via fetch POST
+        function sendDataToGSheet(payload) {
+            const statusBadge = document.getElementById("syncStatusBadge");
+            const webhookUrl = studentData.webhookUrl;
+
+            if (!webhookUrl) {
+                statusBadge.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300";
+                statusBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-600"></i> Webhook Tidak Diisi (Tersimpan Lokal)`;
+                return;
+            }
+
+            statusBadge.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-100 text-blue-900 border border-blue-300";
+            statusBadge.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-blue-600"></i> Mengirim Nilai ke Google Sheets Guru...`;
+
+            fetch(webhookUrl, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                statusBadge.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300";
+                statusBadge.innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-600"></i> Nilai Berhasil Terkirim ke GSheet Guru`;
+            })
+            .catch(err => {
+                console.error("Webhook Send Error:", err);
+                statusBadge.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-rose-100 text-rose-900 border border-rose-300";
+                statusBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation text-rose-600"></i> Gagal Mengirim Nilai (Cek Koneksi)`;
+            });
+        }
+
+        // Export Rekap CSV
+        function downloadCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "No,Kategori,Soal,Jawaban Siswa,Kunci Jawaban,Status\n";
+
+            questionsData.forEach((q, idx) => {
+                const uAns = userAnswers[idx] || "";
+                const isCorrect = q.validAnswers.some(validAns => normalizeFormula(validAns) === normalizeFormula(uAns));
+                const statusStr = isCorrect ? "BENAR" : "SALAH";
+                
+                const cleanText = `"${q.text.replace(/"/g, '""')}"`;
+                const cleanUAns = `"${uAns.replace(/"/g, '""')}"`;
+                const cleanKey = `"${q.validAnswers[0].replace(/"/g, '""')}"`;
+
+                csvContent += `${idx + 1},"${q.category}",${cleanText},${cleanUAns},${cleanKey},${statusStr}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Evaluasi_IB_Komputer_${studentData.nama.replace(/\s+/g, '_')}_${studentData.kelas}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Modal Handlers
+        function openAppsScriptModal() {
+            document.getElementById("appsScriptModal").classList.remove("hidden");
+        }
+
+        function closeAppsScriptModal() {
+            document.getElementById("appsScriptModal").classList.add("hidden");
+        }
+    </script>
+</body>
+</html>
